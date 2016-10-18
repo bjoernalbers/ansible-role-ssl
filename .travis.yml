@@ -5,7 +5,7 @@ os:
 
 before_install:
   - brew update
-  - brew outdated ansible || brew upgrade ansible
+  - brew install ansible
 
 install:
   # Check ansible version
