@@ -1,0 +1,14 @@
+---
+- hosts: localhost
+  roles:
+    - role:                    ssl
+      ssl_basedir:             '/tmp/ssl'
+      ssl_ca_password:         friend
+      ssl_country:             US
+      ssl_state:               NY
+      ssl_city:                New York City
+      ssl_organization:        fsociety
+      ssl_organizational_unit: mr. robot
+      ssl_email_address:       root@whoismrrobot.com
+      ssl_certificates:
+        - www.whoismrrobot.com 

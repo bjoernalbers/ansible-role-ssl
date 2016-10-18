@@ -1,0 +1,14 @@
+---
+# Use a strong password and keep it save!
+ssl_ca_password:         secret
+
+# Distinguished Name
+ssl_country:             US
+ssl_state:               NY
+ssl_city:                New York City
+ssl_organization:        E Corp
+ssl_organizational_unit:
+ssl_email_address:       support@e-corp-usa.com
+
+# List of common names
+ssl_certificates:        []

@@ -1,0 +1,84 @@
+---
+- name: install openssl
+  homebrew: name=openssl state=latest update_homebrew=yes
+
+- name: create directories
+  file: path={{ item }} state=directory mode=0700
+  with_items:
+    - '{{ ssl_basedir }}'
+    - '{{ ssl_keys_dir }}'
+    - '{{ ssl_requests_dir }}'
+    - '{{ ssl_new_certs_dir }}'
+    - '{{ ssl_certs_dir }}'
+
+- name: create config file
+  template: src='openssl.cnf.j2' dest='{{ ssl_config }}'
+
+- name: create ca database
+  copy: content='' dest='{{ ssl_ca_database }}' force=no backup=yes
+
+- name: create ca serial
+  copy: content='1000' dest='{{ ssl_ca_serial }}' force=no backup=yes
+
+- name: create ca key
+  command: >
+    '{{ ssl_openssl }}' genrsa -aes256
+    -out '{{ ssl_ca_key }}' -passout 'pass:{{ ssl_ca_password }}'
+    4096
+  args:
+    creates: '{{ ssl_ca_key }}'
+  no_log: yes
+
+- name: verify ca password
+  command: >
+    '{{ ssl_openssl }}' rsa -noout -check
+    -in '{{ ssl_ca_key }}' -passin 'pass:{{ ssl_ca_password }}'
+  no_log: yes
+
+- name: create ca cert
+  command: >
+    '{{ ssl_openssl }}' req -new -x509 -days 7300
+    -config '{{ ssl_config }}' -extensions v3_ca
+    -subj '/C={{ ssl_country }}/ST={{ ssl_state }}/L={{ ssl_city }}/O={{ ssl_organization }}/OU={{ ssl_organizational_unit }}/emailAddress={{ ssl_email_address }}'
+    -key '{{ ssl_ca_key }}' -passin 'pass:{{ ssl_ca_password }}'
+    -out '{{ ssl_ca_cert }}'
+  args:
+    creates: '{{ ssl_ca_cert }}'
+  no_log: yes
+
+- name: create keys
+  command: >
+    '{{ ssl_openssl }}' genrsa
+    -out '{{ ssl_keys_dir }}/{{ item }}.key'
+    2048
+  args:
+    creates: '{{ ssl_keys_dir }}/{{ item }}.key'
+  with_items: '{{ ssl_certificates }}'
+
+- name: change permission of keys
+  file: path='{{ ssl_keys_dir }}/{{ item }}.key' mode=0400
+  with_items: '{{ ssl_certificates }}'
+
+- name: create certificate signing requests
+  command: >
+    '{{ ssl_openssl }}' req -new
+    -config '{{ ssl_config }}' -extensions v3_ca
+    -subj '/C={{ ssl_country }}/ST={{ ssl_state }}/L={{ ssl_city }}/O={{ ssl_organization }}/OU={{ ssl_organizational_unit }}/emailAddress={{ ssl_email_address }}/CN={{ item }}'
+    -key '{{ ssl_keys_dir }}/{{ item }}.key'
+    -out '{{ ssl_requests_dir }}/{{ item }}.pem'
+  args:
+    creates: '{{ ssl_requests_dir }}/{{ item }}.pem'
+  with_items: '{{ ssl_certificates }}'
+
+- name: sign certificate signing requests
+  command: >
+    '{{ ssl_openssl }}' ca
+    -config '{{ ssl_config }}' -extensions server_cert
+    -days 375 -notext -batch
+    -passin 'pass:{{ ssl_ca_password }}'
+    -in '{{ ssl_requests_dir }}/{{ item }}.pem'
+    -out '{{ ssl_certs_dir }}/{{ item }}.pem'
+  args:
+    creates: '{{ ssl_certs_dir }}/{{ item }}.pem'
+  with_items: '{{ ssl_certificates }}'
+  no_log: yes
