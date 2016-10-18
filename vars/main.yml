@@ -1,0 +1,17 @@
+---
+# Directories
+ssl_basedir:       '{{ ansible_env.HOME }}/ssl'
+ssl_keys_dir:      '{{ ssl_basedir }}/private'
+ssl_requests_dir:  '{{ ssl_basedir }}/requests'
+ssl_new_certs_dir: '{{ ssl_basedir }}/newcerts'
+ssl_certs_dir:     '{{ ssl_basedir }}/certs'
+
+# Certificate Authority
+ssl_ca_key:        '{{ ssl_basedir }}/ca.key'
+ssl_ca_cert:       '{{ ssl_basedir }}/ca.pem'
+ssl_ca_database:   '{{ ssl_basedir }}/index.txt'
+ssl_ca_serial:     '{{ ssl_basedir }}/serial'
+
+# OpenSSL
+ssl_openssl:       '/usr/local/opt/openssl/bin/openssl'
+ssl_config:        '{{ ssl_basedir }}/openssl.cnf'
