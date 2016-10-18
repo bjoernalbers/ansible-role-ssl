@@ -1,23 +1,13 @@
 ---
-language: python
-python: '2.7'
-
+language: ruby
 os:
   - osx
 
-# Use the new container infrastructure
-sudo: false
-
-# Install ansible
-addons:
-  apt:
-    packages:
-    - python-pip
+before_install:
+  - brew update
+  - brew outdated ansible || brew upgrade ansible
 
 install:
-  # Install ansible
-  - pip install ansible
-
   # Check ansible version
   - ansible --version
 
