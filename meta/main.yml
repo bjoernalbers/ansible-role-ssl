@@ -9,7 +9,9 @@ galaxy_info:
   platforms:
   - name: MacOSX
     versions:
-      - all
+      - '10.10'
+      - '10.11'
+      - '10.12'
 
   galaxy_tags:
     - ssl
