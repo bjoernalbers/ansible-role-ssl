@@ -1,7 +1,7 @@
 ---
 - hosts: localhost
   roles:
-    - role:                    ssl
+    - role:                    ansible-role-ssl
       ssl_basedir:             '/tmp/ssl'
       ssl_ca_password:         friend
       ssl_country:             US
