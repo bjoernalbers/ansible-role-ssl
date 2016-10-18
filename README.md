@@ -1,6 +1,8 @@
 Ansible Role: SSL
 =================
 
+[![Build Status](https://travis-ci.org/bjoernalbers/ansible-role-ssl.svg?branch=master)](https://travis-ci.org/bjoernalbers/ansible-role-ssl)
+
 Generate SSL certificates on Mac OS X.
 
 This role generates a self-signed Certificate Authority (CA) which then
