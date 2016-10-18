@@ -12,7 +12,7 @@ install:
   - ansible --version
 
 script:
-  - cd test
+  - cd tests
   - ansible-playbook -i inventory test.yml --syntax-check
   - ansible-playbook -i inventory test.yml
 
